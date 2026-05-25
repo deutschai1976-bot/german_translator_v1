@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>德语翻译助手</title>
+<style>
+body{font-family:Arial;padding:20px;max-width:900px;margin:auto}
+textarea{width:100%;height:160px;margin:10px 0}
+input,button,select{padding:8px;margin:5px}
+.box{border:1px solid #ddd;padding:15px;border-radius:10px;margin:15px 0}
+</style>
+</head>
+<body>
+<h2>德语翻译助手（第一版）</h2>
+
+<div class="box">
+<label>翻译模式：</label>
+<select>
+<option>GPT（待接入API）</option>
+<option>Claude（待接入API）</option>
+<option>Gemini（待接入API）</option>
+<option>DeepL（待接入API）</option>
+</select>
+</div>
+
+<div class="box">
+<h3>术语记忆</h3>
+<input id="de" placeholder="德语词">
+<input id="cn" placeholder="中文词">
+<button onclick="save()">保存术语</button>
+<div id="list"></div>
+</div>
+
+<div class="box">
+<h3>原文</h3>
+<textarea id="src"></textarea>
+<button onclick="convert()">应用术语规则</button>
+<h3>结果</h3>
+<textarea id="out"></textarea>
+<button onclick="download()">导出双语TXT</button>
+</div>
+
+<script>
+let terms=JSON.parse(localStorage.getItem("terms")||"[]");
+
+function render(){
+document.getElementById("list").innerHTML=terms.map(
+x=>"<div>"+x.de+" → "+x.cn+"</div>"
+).join("");
+}
+render();
+
+function save(){
+terms.push({
+de:document.getElementById("de").value,
+cn:document.getElementById("cn").value
+});
+localStorage.setItem("terms",JSON.stringify(terms));
+render();
+}
+
+function convert(){
+let t=document.getElementById("src").value;
+terms.forEach(x=>{
+t=t.replaceAll(x.de,x.cn);
+});
+document.getElementById("out").value=t;
+}
+
+function download(){
+let text="原文:\n"+src.value+"\n\n结果:\n"+out.value;
+let a=document.createElement("a");
+a.href=URL.createObjectURL(new Blob([text]));
+a.download="translation.txt";
+a.click();
+}
+</script>
+</body>
+</html>
